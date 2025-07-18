@@ -1,0 +1,58 @@
+---
+- name: JDK Update to OpenSUS E Leap 15.6
+  hosts: websrv
+  become: yes
+  vars_files:
+    - vars/main.yml
+
+  tasks:
+    - name: Uninstalling Oracle JDK 1.8
+      zypper:
+        name: "jdk1.8"
+        state: absent
+      ignore_errors: yes
+
+    - name: Installing required packages
+      zypper:
+        name:
+          - wget
+          - tar
+          - gzip
+        state: present
+
+    - name: Create a directory for the JDK
+      file:
+        path: /usr/lib/jvm
+        state: directory
+        mode: '0755'
+
+    - name: Downloading OpenJDK {{ jdk_version }}
+      get_url:
+        url: "{{ jdk_download_url }}"
+        dest: "/tmp/openjdk-{{ jdk_version }}.tar.gz"
+        checksum: "{{ jdk_checksum }}"
+        timeout: 120
+
+    - name: Unpacking OpenJDK
+      unarchive:
+        src: "/tmp/openjdk-{{ jdk_version }}.tar.gz"
+        dest: /usr/lib/jvm
+        remote_src: yes
+        extra_opts: ["--strip-components=1"]
+        creates: "/usr/lib/jvm/bin/java"
+
+    - name: Setting up alternatives for Java
+      alternatives:
+        name: java
+        path: "/usr/lib/jvm/bin/java"
+        link: /usr/bin/java
+        priority: 100
+
+    - name: Setting up Jav environment variables
+      blockinfile:
+        path: /etc/profile.d/java.sh
+        block: |
+          export JAVA_HOME=/usr/lib/jvm
+          export PATH=$PATH:/usr/lib/jvm/bin
+        create: yes
+        mode: '0644'

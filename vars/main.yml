@@ -1,0 +1,11 @@
+---
+# JDK version and download URL
+jdk_version: "17.0.2"
+jdk_build: "dfd4a8d0985749f896bed50d7138ee7f/8"
+jdk_checksum: "sha256:0022753d0cceecacdd3a795dd4cea2bd7ffdf9dc06e22ffd1be98411742fbb44"
+jdk_download_url: "https://download.java.net/java/GA/jdk{{ jdk_version }}/{{ jdk_build }}/GPL/openjdk-{{ jdk_version }}_linux-x64_bin.tar.gz"
+ 
+# Nginx settings
+nginx_user: nginx
+nginx_group: nginx
+nginx_web_root: /srv/www/htdocs

@@ -1,0 +1,3 @@
+---
+ansible_user: who
+ansible_ssh_private_key_file: /home/who/.ssh/id_ed25519
